@@ -1,0 +1,335 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taskora - Smart To-Do List</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+
+<body>
+
+    <main class="app-container">
+
+        <!-- AUTHENTICATION SECTION -->
+        <section id="authSection" class="auth-section">
+
+            <div class="auth-card">
+
+                <div class="brand">
+                    <span class="brand-icon">✓</span>
+                    <h1>Taskora</h1>
+                </div>
+
+                <p class="auth-subtitle">
+                    Organize your day, one task at a time.
+                </p>
+
+                <div class="auth-tabs">
+                    <button type="button" id="loginTab" class="auth-tab active">
+                        Login
+                    </button>
+
+                    <button type="button" id="registerTab" class="auth-tab">
+                        Register
+                    </button>
+                </div>
+
+                <p id="authMessage" class="message"></p>
+
+                <!-- LOGIN FORM -->
+                <form id="loginForm">
+
+                    <h2>Welcome Back!</h2>
+                    <p class="form-description">Login to continue to your tasks.</p>
+
+                    <label for="loginEmail">Email Address</label>
+                    <input
+                        type="email"
+                        id="loginEmail"
+                        placeholder="Enter your email"
+                        required
+                    >
+
+                    <label for="loginPassword">Password</label>
+                    <input
+                        type="password"
+                        id="loginPassword"
+                        placeholder="Enter your password"
+                        required
+                    >
+
+                    <button type="submit" class="primary-btn">
+                        Login
+                    </button>
+
+                    <p class="switch-text">
+                        Don't have an account?
+                        <button type="button" id="showRegister">
+                            Register
+                        </button>
+                    </p>
+
+                </form>
+
+                <!-- REGISTER FORM -->
+                <form id="registerForm" class="hidden">
+
+                    <h2>Create Account</h2>
+                    <p class="form-description">Start organizing your tasks today.</p>
+
+                    <label for="registerName">Full Name</label>
+                    <input
+                        type="text"
+                        id="registerName"
+                        placeholder="Enter your name"
+                        required
+                    >
+
+                    <label for="registerEmail">Email Address</label>
+                    <input
+                        type="email"
+                        id="registerEmail"
+                        placeholder="Enter your email"
+                        required
+                    >
+
+                    <label for="registerPassword">Password</label>
+                    <input
+                        type="password"
+                        id="registerPassword"
+                        placeholder="Create a password"
+                        minlength="6"
+                        required
+                    >
+
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input
+                        type="password"
+                        id="confirmPassword"
+                        placeholder="Confirm your password"
+                        required
+                    >
+
+                    <button type="submit" class="primary-btn">
+                        Create Account
+                    </button>
+
+                    <p class="switch-text">
+                        Already have an account?
+                        <button type="button" id="showLogin">
+                            Login
+                        </button>
+                    </p>
+
+                </form>
+
+            </div>
+        </section>
+
+
+        <!-- MAIN DASHBOARD -->
+        <section id="dashboardSection" class="dashboard-section hidden">
+
+            <!-- HEADER -->
+            <header class="app-header">
+
+                <div class="brand">
+                    <span class="brand-icon">✓</span>
+                    <h1>Taskora</h1>
+                </div>
+
+                <div class="header-actions">
+
+                    <button type="button" id="themeToggle" class="icon-btn">
+                        🌙
+                    </button>
+
+                    <button type="button" id="logoutBtn" class="logout-btn">
+                        Logout
+                    </button>
+
+                </div>
+
+            </header>
+
+
+            <!-- WELCOME SECTION -->
+            <section class="welcome-section">
+
+                <div>
+                    <h2 id="welcomeMessage">Hello!</h2>
+                    <p>Let's make today productive.</p>
+                </div>
+
+                <div class="date-display" id="currentDate"></div>
+
+            </section>
+
+
+            <!-- TASK STATISTICS -->
+            <section class="stats-container">
+
+                <div class="stat-card">
+                    <span class="stat-icon">📋</span>
+                    <h3 id="totalTasks">0</h3>
+                    <p>Total Tasks</p>
+                </div>
+
+                <div class="stat-card">
+                    <span class="stat-icon">⏳</span>
+                    <h3 id="activeTasks">0</h3>
+                    <p>Active Tasks</p>
+                </div>
+
+                <div class="stat-card">
+                    <span class="stat-icon">✅</span>
+                    <h3 id="completedTasks">0</h3>
+                    <p>Completed Tasks</p>
+                </div>
+
+                <div class="stat-card">
+                    <span class="stat-icon">⚠️</span>
+                    <h3 id="overdueTasks">0</h3>
+                    <p>Overdue Tasks</p>
+                </div>
+
+            </section>
+
+
+            <!-- ADD TASK SECTION -->
+            <section class="task-form-section">
+
+                <h2 id="taskFormHeading">Add a New Task</h2>
+
+                <form id="taskForm">
+
+                    <input type="hidden" id="editTaskId">
+
+                    <div class="form-group">
+                        <label for="taskTitle">Task Title</label>
+                        <input
+                            type="text"
+                            id="taskTitle"
+                            placeholder="What do you need to do?"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-row">
+
+                        <div class="form-group">
+                            <label for="taskDueDate">Due Date</label>
+                            <input type="date" id="taskDueDate">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="taskReminder">Reminder</label>
+                            <input type="datetime-local" id="taskReminder">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="taskPriority">Priority</label>
+                            <select id="taskPriority">
+                                <option value="Low">Low</option>
+                                <option value="Medium" selected>Medium</option>
+                                <option value="High">High</option>
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <div class="form-buttons">
+
+                        <button type="submit" id="submitTaskBtn" class="primary-btn">
+                            + Add Task
+                        </button>
+
+                        <button
+                            type="button"
+                            id="cancelEditBtn"
+                            class="secondary-btn hidden"
+                        >
+                            Cancel Edit
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </section>
+
+
+            <!-- UPCOMING REMINDERS -->
+            <section class="reminder-section">
+
+                <div class="section-heading">
+                    <h2>Upcoming Reminders</h2>
+
+                    <button type="button" id="notificationBtn" class="secondary-btn">
+                        Enable Notifications
+                    </button>
+                </div>
+
+                <div id="reminderList" class="reminder-list">
+                    <p class="empty-message">No upcoming reminders.</p>
+                </div>
+
+            </section>
+
+
+            <!-- TASK LIST SECTION -->
+            <section class="task-section">
+
+                <div class="section-heading">
+                    <h2>My Tasks</h2>
+
+                    <button type="button" id="clearCompleted" class="clear-btn">
+                        Clear Completed
+                    </button>
+                </div>
+
+
+                <!-- FILTER BUTTONS -->
+                <div class="filter-container">
+
+                    <button type="button" class="filter-btn active" data-filter="all">
+                        All
+                    </button>
+
+                    <button type="button" class="filter-btn" data-filter="active">
+                        Active
+                    </button>
+
+                    <button type="button" class="filter-btn" data-filter="completed">
+                        Completed
+                    </button>
+
+                </div>
+
+
+                <!-- TASKS WILL BE ADDED HERE USING JAVASCRIPT -->
+                <div id="taskList" class="task-list">
+
+                    <p class="empty-message">
+                        No tasks yet. Add your first task!
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <!-- FOOTER -->
+            <footer class="app-footer">
+                <p>Taskora © 2026 | Stay Organized. Stay Productive.</p>
+            </footer>
+
+        </section>
+
+    </main>
+
+</body>
+</html>

@@ -1,0 +1,679 @@
+
+/* ==============================
+   TASKORA - GLOBAL STYLES
+================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary: #5b8def;
+    --primary-dark: #4075d6;
+    --background: #f3f7ff;
+    --card: #ffffff;
+    --text: #263449;
+    --muted: #7b8798;
+    --border: #e2eaf5;
+    --success: #35a879;
+    --danger: #e45c65;
+    --shadow: 0 8px 25px rgba(65, 105, 170, 0.09);
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: var(--background);
+    color: var(--text);
+    min-height: 100vh;
+    transition: background 0.3s, color 0.3s;
+}
+
+button,
+input,
+select {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+    border: none;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.app-container {
+    width: 100%;
+    max-width: 1100px;
+    margin: auto;
+    padding: 30px 20px;
+}
+
+
+/* ==============================
+   BRAND
+================================ */
+
+.brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.brand h1 {
+    font-size: 29px;
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.brand-icon {
+    width: 38px;
+    height: 38px;
+    background: var(--primary);
+    color: white;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 23px;
+    font-weight: bold;
+}
+
+
+/* ==============================
+   AUTHENTICATION
+================================ */
+
+.auth-section {
+    min-height: 85vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 430px;
+    background: var(--card);
+    padding: 35px;
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+}
+
+.auth-subtitle {
+    text-align: center;
+    color: var(--muted);
+    margin: 15px 0 25px;
+    font-size: 14px;
+}
+
+.auth-tabs {
+    display: flex;
+    background: var(--background);
+    padding: 5px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+}
+
+.auth-tab {
+    flex: 1;
+    padding: 11px;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--muted);
+    font-weight: bold;
+}
+
+.auth-tab.active {
+    background: var(--primary);
+    color: white;
+}
+
+.auth-card h2 {
+    font-size: 23px;
+    margin-bottom: 7px;
+}
+
+.form-description {
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.auth-card label,
+.form-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.auth-card input,
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 13px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: var(--card);
+    color: var(--text);
+    outline: none;
+    margin-bottom: 17px;
+}
+
+input:focus,
+select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(91, 141, 239, 0.12);
+}
+
+.primary-btn {
+    background: var(--primary);
+    color: white;
+    padding: 13px 20px;
+    border-radius: 9px;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.primary-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+.auth-card .primary-btn {
+    width: 100%;
+    margin-top: 5px;
+}
+
+.switch-text {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+    color: var(--muted);
+}
+
+.switch-text button {
+    background: none;
+    color: var(--primary);
+    font-weight: bold;
+}
+
+.message {
+    font-size: 13px;
+    margin-bottom: 12px;
+    min-height: 18px;
+    color: var(--danger);
+}
+
+
+/* ==============================
+   DASHBOARD HEADER
+================================ */
+
+.app-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--card);
+    padding: 18px 25px;
+    border-radius: 15px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+}
+
+.app-header .brand {
+    justify-content: flex-start;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.icon-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--background);
+    font-size: 19px;
+}
+
+.logout-btn {
+    background: #fff0f0;
+    color: var(--danger);
+    padding: 11px 17px;
+    border-radius: 9px;
+    font-weight: bold;
+}
+
+
+/* ==============================
+   WELCOME SECTION
+================================ */
+
+.welcome-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 30px 0 22px;
+}
+
+.welcome-section h2 {
+    font-size: 27px;
+    margin-bottom: 7px;
+}
+
+.welcome-section p,
+.date-display {
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.date-display {
+    background: var(--card);
+    padding: 12px 16px;
+    border-radius: 9px;
+    border: 1px solid var(--border);
+}
+
+
+/* ==============================
+   STATISTICS
+================================ */
+
+.stats-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 25px;
+}
+
+.stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+}
+
+.stat-icon {
+    font-size: 22px;
+}
+
+.stat-card h3 {
+    font-size: 27px;
+    margin: 12px 0 5px;
+}
+
+.stat-card p {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+
+/* ==============================
+   SECTIONS
+================================ */
+
+.task-form-section,
+.reminder-section,
+.task-section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 22px;
+    box-shadow: var(--shadow);
+}
+
+.task-form-section h2,
+.section-heading h2 {
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+}
+
+.form-group {
+    min-width: 0;
+}
+
+.form-group input,
+.form-group select {
+    margin-bottom: 5px;
+}
+
+.form-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.secondary-btn {
+    background: #eaf1ff;
+    color: var(--primary-dark);
+    padding: 11px 16px;
+    border-radius: 9px;
+    font-weight: bold;
+}
+
+
+/* ==============================
+   REMINDERS
+================================ */
+
+.section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.reminder-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.reminder-item {
+    padding: 13px;
+    background: var(--background);
+    border-radius: 9px;
+    border-left: 4px solid var(--primary);
+    font-size: 14px;
+}
+
+.empty-message {
+    color: var(--muted);
+    text-align: center;
+    padding: 20px 10px;
+}
+
+
+/* ==============================
+   FILTERS
+================================ */
+
+.filter-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    background: var(--background);
+    color: var(--muted);
+    padding: 9px 17px;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+.filter-btn.active {
+    background: var(--primary);
+    color: white;
+}
+
+.clear-btn {
+    color: var(--danger);
+    background: #fff0f0;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+
+/* ==============================
+   TASK ITEMS
+================================ */
+
+.task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.task-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    background: var(--card);
+}
+
+.task-main {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    min-width: 0;
+}
+
+.task-checkbox {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary);
+    cursor: pointer;
+}
+
+.task-info {
+    min-width: 0;
+}
+
+.task-info h3 {
+    font-size: 15px;
+    margin-bottom: 6px;
+    overflow-wrap: anywhere;
+}
+
+.task-info p {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.task-item.completed .task-info h3 {
+    text-decoration: line-through;
+    color: var(--muted);
+}
+
+.task-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.edit-btn,
+.delete-btn {
+    padding: 8px 11px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.edit-btn {
+    background: #eaf1ff;
+    color: var(--primary-dark);
+}
+
+.delete-btn {
+    background: #fff0f0;
+    color: var(--danger);
+}
+
+.priority {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+.priority.Low {
+    background: #e4f7ed;
+    color: #25865b;
+}
+
+.priority.Medium {
+    background: #fff4d9;
+    color: #a87916;
+}
+
+.priority.High {
+    background: #ffe5e5;
+    color: #d34444;
+}
+
+.overdue-label {
+    color: var(--danger);
+    font-weight: bold;
+    margin-left: 5px;
+}
+
+
+/* ==============================
+   FOOTER
+================================ */
+
+.app-footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+    padding: 15px;
+}
+
+
+/* ==============================
+   DARK MODE
+================================ */
+
+body.dark-mode {
+    --background: #151d2b;
+    --card: #202c3d;
+    --text: #edf2fa;
+    --muted: #a8b5c8;
+    --border: #344256;
+    --shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+body.dark-mode .logout-btn,
+body.dark-mode .clear-btn,
+body.dark-mode .delete-btn {
+    background: #482d38;
+    color: #ff9da5;
+}
+
+body.dark-mode .secondary-btn,
+body.dark-mode .edit-btn {
+    background: #293d5c;
+    color: #a9c8ff;
+}
+
+body.dark-mode .filter-btn {
+    background: #29384c;
+    color: var(--muted);
+}
+
+body.dark-mode .filter-btn.active {
+    background: var(--primary);
+    color: white;
+}
+
+body.dark-mode .priority.Low {
+    background: #234737;
+    color: #8be0b2;
+}
+
+body.dark-mode .priority.Medium {
+    background: #51432b;
+    color: #f5d28a;
+}
+
+body.dark-mode .priority.High {
+    background: #542f38;
+    color: #ffaaaa;
+}
+
+
+/* ==============================
+   RESPONSIVE DESIGN
+================================ */
+
+@media (max-width: 800px) {
+
+    .stats-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+@media (max-width: 550px) {
+
+    .app-container {
+        padding: 15px 10px;
+    }
+
+    .auth-card {
+        padding: 25px 20px;
+    }
+
+    .app-header {
+        padding: 15px;
+    }
+
+    .brand h1 {
+        font-size: 23px;
+    }
+
+    .welcome-section {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .stats-container {
+        gap: 10px;
+    }
+
+    .stat-card {
+        padding: 15px;
+    }
+
+    .task-form-section,
+    .reminder-section,
+    .task-section {
+        padding: 17px;
+    }
+
+    .section-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .task-item {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .task-actions {
+        align-self: flex-end;
+    }
+
+}
