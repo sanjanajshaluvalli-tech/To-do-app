@@ -677,3 +677,71 @@ body.dark-mode .priority.High {
     }
 
 }
+
+/* ==============================
+   REMINDER TIME PICKER (AM/PM)
+================================ */
+
+.reminder-time-input {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+
+.reminder-time-input input {
+    flex: 1;
+    min-width: 0;
+    width: auto;
+    padding: 13px 8px;
+    margin-bottom: 17px;
+    text-align: center;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: var(--card);
+    color: var(--text);
+    outline: none;
+}
+
+.reminder-time-input select {
+    flex: 1;
+    min-width: 65px;
+    width: auto;
+    padding: 13px 8px;
+    margin-bottom: 17px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: var(--card);
+    color: var(--text);
+    outline: none;
+}
+
+.reminder-time-input span {
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--muted);
+    margin-bottom: 17px;
+}
+
+.reminder-time-input input:focus,
+.reminder-time-input select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(91, 141, 239, 0.12);
+}
+
+/* Keep the reminder picker neat on smaller screens */
+
+@media (max-width: 550px) {
+
+    .reminder-time-input {
+        gap: 6px;
+    }
+
+    .reminder-time-input input,
+    .reminder-time-input select {
+        padding: 12px 6px;
+        font-size: 14px;
+    }
+
+}
+
