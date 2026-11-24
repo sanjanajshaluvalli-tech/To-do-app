@@ -16,7 +16,6 @@ const loginTab = document.getElementById("loginTab");
 const registerTab = document.getElementById("registerTab");
 
 const authMessage = document.getElementById("authMessage");
-
 const logoutBtn = document.getElementById("logoutBtn");
 
 const taskForm = document.getElementById("taskForm");
@@ -26,6 +25,12 @@ const taskTitle = document.getElementById("taskTitle");
 const taskDueDate = document.getElementById("taskDueDate");
 const taskReminder = document.getElementById("taskReminder");
 const taskPriority = document.getElementById("taskPriority");
+
+// New 12-hour reminder input fields
+const reminderDate = document.getElementById("reminderDate");
+const reminderHour = document.getElementById("reminderHour");
+const reminderMinute = document.getElementById("reminderMinute");
+const reminderPeriod = document.getElementById("reminderPeriod");
 
 const editTaskId = document.getElementById("editTaskId");
 const taskFormHeading = document.getElementById("taskFormHeading");
@@ -45,7 +50,11 @@ const reminderList = document.getElementById("reminderList");
 let currentUser = null;
 let tasks = [];
 let currentFilter = "all";
+
 let notifiedReminders = new Set();
+
+// Audio for the alarm
+let alarmAudioContext = null;
 
 const USERS_KEY = "taskora_users";
 const SESSION_KEY = "taskora_current_user";
@@ -81,9 +90,179 @@ function saveTasks() {
 }
 
 
+// ---------- REMINDER TIME FUNCTIONS ----------
+
+// Convert 12-hour input into a 24-hour time.
+// Example: 7:30 PM becomes 19:30.
+
+function getReminderValue() {
+
+    const date = reminderDate.value;
+    const hour = Number(reminderHour.value);
+    const minute = Number(reminderMinute.value);
+    const period = reminderPeriod.value;
+
+    if (!date || !reminderHour.value || !reminderMinute.value) {
+        return "";
+    }
+
+    if (
+        hour < 1 || hour > 12 ||
+        minute < 0 || minute > 59
+    ) {
+        return null;
+    }
+
+    let hour24 = hour;
+
+    if (period === "AM" && hour === 12) {
+        hour24 = 0;
+    }
+
+    if (period === "PM" && hour !== 12) {
+        hour24 = hour + 12;
+    }
+
+    const formattedHour = String(hour24).padStart(2, "0");
+    const formattedMinute = String(minute).padStart(2, "0");
+
+    // Store as a local date-time string.
+    return `${date}T${formattedHour}:${formattedMinute}`;
+}
+
+
+// Convert a saved 24-hour reminder into the 12-hour input fields.
+// This also supports reminders saved by the older version.
+
+function setReminderInputs(savedReminder) {
+
+    if (!savedReminder) {
+        reminderDate.value = "";
+        reminderHour.value = "";
+        reminderMinute.value = "";
+        reminderPeriod.value = "AM";
+        taskReminder.value = "";
+        return;
+    }
+
+    const date = new Date(savedReminder);
+
+    if (isNaN(date.getTime())) {
+        reminderDate.value = "";
+        reminderHour.value = "";
+        reminderMinute.value = "";
+        reminderPeriod.value = "AM";
+        taskReminder.value = "";
+        return;
+    }
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    let hour = date.getHours();
+    const minute = String(date.getMinutes()).padStart(2, "0");
+
+    const period = hour >= 12 ? "PM" : "AM";
+
+    hour = hour % 12;
+
+    if (hour === 0) {
+        hour = 12;
+    }
+
+    reminderDate.value = `${year}-${month}-${day}`;
+    reminderHour.value = hour;
+    reminderMinute.value = minute;
+    reminderPeriod.value = period;
+
+    taskReminder.value = savedReminder;
+}
+
+
+// Keep the hidden field updated when the user changes reminder inputs.
+
+function updateReminderValue() {
+
+    const reminder = getReminderValue();
+
+    taskReminder.value = reminder || "";
+
+}
+
+reminderDate.addEventListener("change", updateReminderValue);
+reminderHour.addEventListener("input", updateReminderValue);
+reminderMinute.addEventListener("input", updateReminderValue);
+reminderPeriod.addEventListener("change", updateReminderValue);
+
+
+// ---------- ALARM SOUND ----------
+
+// Prepare the browser audio after the user interacts with the page.
+// Browsers may block sound until the user has interacted with the page.
+
+function enableAlarmAudio() {
+
+    const AudioContext =
+        window.AudioContext || window.webkitAudioContext;
+
+    if (!AudioContext) return;
+
+    if (!alarmAudioContext) {
+        alarmAudioContext = new AudioContext();
+    }
+
+    if (alarmAudioContext.state === "suspended") {
+        alarmAudioContext.resume();
+    }
+
+}
+
+document.addEventListener("click", enableAlarmAudio, { once: true });
+
+
+// Play one short beep when a reminder becomes due.
+
+function playAlarmSound() {
+
+    if (!alarmAudioContext) return;
+
+    if (alarmAudioContext.state !== "running") {
+        return;
+    }
+
+    const oscillator = alarmAudioContext.createOscillator();
+    const gain = alarmAudioContext.createGain();
+
+    oscillator.connect(gain);
+    gain.connect(alarmAudioContext.destination);
+
+    oscillator.type = "sine";
+    oscillator.frequency.setValueAtTime(
+        750,
+        alarmAudioContext.currentTime
+    );
+
+    gain.gain.setValueAtTime(
+        0.25,
+        alarmAudioContext.currentTime
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+        0.001,
+        alarmAudioContext.currentTime + 0.6
+    );
+
+    oscillator.start();
+    oscillator.stop(alarmAudioContext.currentTime + 0.6);
+
+}
+
+
 // ---------- AUTHENTICATION ----------
 
 function showLogin() {
+
     loginForm.classList.remove("hidden");
     registerForm.classList.add("hidden");
 
@@ -91,9 +270,11 @@ function showLogin() {
     registerTab.classList.remove("active");
 
     authMessage.textContent = "";
+
 }
 
 function showRegister() {
+
     registerForm.classList.remove("hidden");
     loginForm.classList.add("hidden");
 
@@ -101,6 +282,7 @@ function showRegister() {
     loginTab.classList.remove("active");
 
     authMessage.textContent = "";
+
 }
 
 loginTab.addEventListener("click", showLogin);
@@ -117,13 +299,16 @@ registerForm.addEventListener("submit", function(event) {
     event.preventDefault();
 
     const name = document.getElementById("registerName").value.trim();
-    const email = document.getElementById("registerEmail").value.trim().toLowerCase();
+
+    const email = document.getElementById("registerEmail")
+        .value.trim().toLowerCase();
 
     const password = document.getElementById("registerPassword").value;
     const confirmPassword = document.getElementById("confirmPassword").value;
 
     if (password.length < 6) {
-        authMessage.textContent = "Password must contain at least 6 characters.";
+        authMessage.textContent =
+            "Password must contain at least 6 characters.";
         return;
     }
 
@@ -155,12 +340,11 @@ registerForm.addEventListener("submit", function(event) {
 
     registerForm.reset();
 
-    authMessage.style.color = "#35a879";
-    authMessage.textContent = "Registration successful! Please login.";
-
     showLogin();
+
     authMessage.style.color = "#35a879";
-    authMessage.textContent = "Account created successfully! Please login.";
+    authMessage.textContent =
+        "Account created successfully! Please login.";
 
 });
 
@@ -171,7 +355,9 @@ loginForm.addEventListener("submit", function(event) {
 
     event.preventDefault();
 
-    const email = document.getElementById("loginEmail").value.trim().toLowerCase();
+    const email = document.getElementById("loginEmail")
+        .value.trim().toLowerCase();
+
     const password = document.getElementById("loginPassword").value;
 
     const users = getUsers();
@@ -216,6 +402,7 @@ function startDashboard() {
         });
 
     loadTasks();
+
     renderTasks();
     updateStatistics();
     renderReminders();
@@ -233,6 +420,8 @@ logoutBtn.addEventListener("click", function() {
 
     currentUser = null;
     tasks = [];
+
+    notifiedReminders.clear();
 
     dashboardSection.classList.add("hidden");
     authSection.classList.remove("hidden");
@@ -261,17 +450,29 @@ taskForm.addEventListener("submit", function(event) {
     }
 
     const dueDate = taskDueDate.value;
-    const reminder = taskReminder.value;
+
+    const reminder = getReminderValue();
+
     const priority = taskPriority.value;
 
-    if (dueDate && reminder) {
-        const dueDateEnd = new Date(dueDate + "T23:59:59");
-        const reminderDate = new Date(reminder);
+    // Check whether the reminder inputs are valid.
 
-        if (reminderDate > dueDateEnd) {
+    if (reminder === null) {
+        alert("Please enter a valid reminder time.");
+        return;
+    }
+
+    // Check that the reminder is not later than the due date.
+
+    if (dueDate && reminder) {
+
+        const reminderDateOnly = reminder.split("T")[0];
+
+        if (reminderDateOnly > dueDate) {
             alert("Reminder cannot be later than the due date.");
             return;
         }
+
     }
 
     // EDIT EXISTING TASK
@@ -285,13 +486,21 @@ taskForm.addEventListener("submit", function(event) {
         });
 
         if (task) {
+
+            const oldReminder = task.reminder;
+
             task.title = title;
             task.dueDate = dueDate;
             task.reminder = reminder;
             task.priority = priority;
 
             // Allow a changed reminder to notify again.
-            notifiedReminders.delete(task.id);
+
+            if (oldReminder !== reminder) {
+                const reminderKey = currentUser.id + "_" + task.id;
+                notifiedReminders.delete(reminderKey);
+            }
+
         }
 
         cancelEditing();
@@ -303,12 +512,16 @@ taskForm.addEventListener("submit", function(event) {
     else {
 
         const newTask = {
-            id: Date.now().toString() + Math.random().toString(16).slice(2),
+
+            id: Date.now().toString() +
+                Math.random().toString(16).slice(2),
+
             title: title,
             dueDate: dueDate,
             reminder: reminder,
             priority: priority,
             completed: false
+
         };
 
         tasks.push(newTask);
@@ -318,7 +531,10 @@ taskForm.addEventListener("submit", function(event) {
     saveTasks();
 
     taskForm.reset();
+
     taskPriority.value = "Medium";
+
+    taskReminder.value = "";
 
     renderTasks();
     updateStatistics();
@@ -339,7 +555,9 @@ function editTask(id) {
 
     taskTitle.value = task.title;
     taskDueDate.value = task.dueDate || "";
-    taskReminder.value = task.reminder || "";
+
+    setReminderInputs(task.reminder || "");
+
     taskPriority.value = task.priority;
 
     editTaskId.value = task.id;
@@ -372,6 +590,8 @@ function cancelEditing() {
 
     taskPriority.value = "Medium";
 
+    taskReminder.value = "";
+
 }
 
 cancelEditBtn.addEventListener("click", cancelEditing);
@@ -381,7 +601,8 @@ cancelEditBtn.addEventListener("click", cancelEditing);
 
 function deleteTask(id) {
 
-    const confirmDelete = confirm("Are you sure you want to delete this task?");
+    const confirmDelete =
+        confirm("Are you sure you want to delete this task?");
 
     if (!confirmDelete) return;
 
@@ -389,7 +610,8 @@ function deleteTask(id) {
         return task.id !== id;
     });
 
-    notifiedReminders.delete(id);
+    const reminderKey = currentUser.id + "_" + id;
+    notifiedReminders.delete(reminderKey);
 
     saveTasks();
 
@@ -468,15 +690,19 @@ function renderTasks() {
     let filteredTasks = tasks;
 
     if (currentFilter === "active") {
+
         filteredTasks = tasks.filter(function(task) {
             return !task.completed;
         });
+
     }
 
     if (currentFilter === "completed") {
+
         filteredTasks = tasks.filter(function(task) {
             return task.completed;
         });
+
     }
 
     if (filteredTasks.length === 0) {
@@ -702,9 +928,11 @@ function renderReminders() {
     reminderList.innerHTML = "";
 
     const upcomingTasks = tasks
+
         .filter(function(task) {
             return task.reminder && !task.completed;
         })
+
         .sort(function(a, b) {
             return new Date(a.reminder) - new Date(b.reminder);
         });
@@ -727,11 +955,18 @@ function renderReminders() {
 
         reminderElement.className = "reminder-item";
 
-        const reminderDate = new Date(task.reminder);
+        const reminderDateTime = new Date(task.reminder);
 
         reminderElement.textContent =
             task.title + " — " +
-            reminderDate.toLocaleString("en-IN");
+            reminderDateTime.toLocaleString("en-IN", {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+                hour: "numeric",
+                minute: "2-digit",
+                hour12: true
+            });
 
         reminderList.appendChild(reminderElement);
 
@@ -758,6 +993,8 @@ notificationBtn.addEventListener("click", async function() {
         notificationBtn.textContent = "Notifications Enabled";
 
         alert("Notifications enabled successfully!");
+
+        enableAlarmAudio();
 
         checkReminders();
 
@@ -791,7 +1028,16 @@ function checkReminders() {
             !notifiedReminders.has(reminderKey)
         ) {
 
+            // Mark this reminder as notified so it does not
+            // repeatedly play during this page session.
+
             notifiedReminders.add(reminderKey);
+
+            // Play one short beep.
+
+            playAlarmSound();
+
+            // Show browser notification if permission is granted.
 
             if (
                 "Notification" in window &&
@@ -882,11 +1128,13 @@ function restoreSession() {
     if (savedUser) {
 
         currentUser = savedUser;
+
         startDashboard();
 
     } else {
 
         localStorage.removeItem(SESSION_KEY);
+
         showLogin();
 
     }
